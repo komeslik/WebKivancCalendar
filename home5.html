@@ -48,10 +48,11 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 		var currentMonth = new Month(2016, 9);
 		var table = document.getElementById("calendar");
 		table.style.height="200px";
-		for(i = 0; i < currentMonth.getWeeks().length; i++){
+		for(week = 0; week < currentMonth.getWeeks().length; week++){
 			var row = table.insertRow(-1);
 			for(day = 0; day < 7; day++){
-				row.insertCell(day);
+				cell = row.insertCell(day);
+				cell.innerHTML = currentMonth.getWeeks()[week].getDates()[day].getDate();
 			}
 		}
 	</script>
