@@ -26,18 +26,16 @@
 
 <body>
 	<div id="main">
-		<form action="loginInfo5.php" method="POST">
-			<p>
-				<a>Username:</a>
-				<input type="text" name="username">
-				<a>Password:</a>
-				<input type="password" name="password"><br>
-			</p>
-			<p>
-				<input type="submit" name="action" value="Log In" />
-				<input type="submit" name="action" value="Sign Up" />
-			</p>
-		</form>
+		<p>
+			<a>Username:</a>
+			<input type="text" id="username">
+			<a>Password:</a>
+			<input type="password" id="password"><br>
+			<button id="login_btn">Log In</button>
+			<button id="signup_btn">Sign Up</button>
+
+			<script type="text/javascript" src="login_ajax5.js"></script>
+		</p>
 		<button id="prevBtn">Last Month</button>
 		<button id="nextBtn">Next Month</button>
 		<table border="1" width="100%" id="calendar">
