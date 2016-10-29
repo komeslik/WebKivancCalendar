@@ -94,15 +94,13 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 			    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests
 			    xmlHttp.addEventListener("load", function(event) {
 			      var jsonData = JSON.parse(event.target.responseText); // parse the JSON into a JavaScript object
-						cell.innerHTML = date.getDate()
-						var hasEventsString = "" + jsonData.hasEvents;
-						cell.innerHTML += hasEventsString;
+						cell.innerHTML = date.getDate() + "<br>";
 						if (jsonData.hasEvents) { // in PHP, this was the "success" key in the associative array; in JavaScript, it's the .success property of jsonData
 							var events = jsonData.events;
 							for(var i in events){
 								var title = events[i].title;
 								var time = events[i].time;
-								var eventHTML = "<p>" + title + " " + time + "</p><br>";
+								var eventHTML = title + " " + time + "<br>";
 								cell.innerHTML += eventHTML;
 							}
 		        }
@@ -112,8 +110,8 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 
 				document.getElementById("calendar").style.height = "200px";
 				document.getElementById("calendar").createCaption();
-				var currentMonth = new Month(2016, 10);
 				var currentDate = new Date();
+				var currentMonth = new Month(currentDate.getFullYear(), currentDate.getMonth());
 				$("#prevBtn").click(function() {
 					currentMonth = currentMonth.prevMonth();
 					display();
