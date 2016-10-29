@@ -94,7 +94,9 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 			    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests
 			    xmlHttp.addEventListener("load", function(event) {
 			      var jsonData = JSON.parse(event.target.responseText); // parse the JSON into a JavaScript object
-						cell.innerHTML = date.getDate();
+						cell.innerHTML = date.getDate()
+						var hasEventsString = "" + jsonData.hasEvents;
+						cell.innerHTML += hasEventsString;
 						if (jsonData.hasEvents) { // in PHP, this was the "success" key in the associative array; in JavaScript, it's the .success property of jsonData
 							var events = jsonData.events;
 							for(var i in events){
