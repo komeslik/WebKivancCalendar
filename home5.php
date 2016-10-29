@@ -20,8 +20,18 @@
 			margin: 0;
 			padding: 10px;
 		}
+		#mydialog { display:none }
 	</style>
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" type="text/javascript"></script>
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/start/jquery-ui.css"
+ type="text/css" rel="Stylesheet" />
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
+<script type="text/javascript">
+	function showdialog()
+	{
+		$("#mydialog").dialog();
+	}
+</script>
 </head>
 
 <body>
@@ -95,15 +105,20 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 			    xmlHttp.addEventListener("load", function(event) {
 			      var jsonData = JSON.parse(event.target.responseText); // parse the JSON into a JavaScript object
 						cell.innerHTML = date.getDate() + "<br>";
+						var buttonString = '<input type="button" value="0 events" onclick=showdialog() /><div id="mydialog" title="Events for'+date.toDateString()+' ">Here are todays events:</div>'
 						if (jsonData.hasEvents) { // in PHP, this was the "success" key in the associative array; in JavaScript, it's the .success property of jsonData
 							var events = jsonData.events;
-							for(var i in events){
-								var title = events[i].title;
-								var time = events[i].time;
-								var eventHTML = title + " " + time + "<br>";
-								cell.innerHTML += eventHTML;
-							}
+							//update button if there are events
+							var dialogDiv = '<div id="mydialog" title="Events for'+date.toDateString()+' ">Here are todays events:</div>'
+							var buttonString = '<input type="button" value="'+ events.length +' events" onclick=showdialog() />'+dialogDiv;
+							// for(var i in events){
+							// 	var title = events[i].title;
+							// 	var time = events[i].time;
+							// 	var eventHTML = title + " " + time + "<br>";
+							// 	cell.innerHTML += eventHTML;
+							// }
 		        }
+						cell.innerHTML += buttonString;
 			    }, false); // Bind the callback to the load event
 			    xmlHttp.send(dateString); // Send the data
 				}
