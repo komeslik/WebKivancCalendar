@@ -70,6 +70,8 @@
 					<th>Saturday</th>
 				</tr>
 			</table>
+		</div>
+		<div id="events">
 			<script type="text/javascript">
 			(function(){Date.prototype.deltaDays=function(c){return new Date(this.getFullYear(),this.getMonth(),this.getDate()+c)};Date.prototype.getSunday=function(){return this.deltaDays(-1*this.getDay())}})();
 function Week(c){this.sunday=c.getSunday();this.nextWeek=function(){return new Week(this.sunday.deltaDays(7))};this.prevWeek=function(){return new Week(this.sunday.deltaDays(-7))};this.contains=function(b){return this.sunday.valueOf()===b.getSunday().valueOf()};this.getDates=function(){for(var b=[],a=0;7>a;a++)b.push(this.sunday.deltaDays(a));return b}}
@@ -104,23 +106,50 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 			    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests
 			    xmlHttp.addEventListener("load", function(event) {
 			      var jsonData = JSON.parse(event.target.responseText); // parse the JSON into a JavaScript object
-						cell.innerHTML = date.getDate() + "<br>";
-						var buttonString = '<input type="button" value="0 events" onclick=showdialog() /><div id="mydialog" title="Events for'+date.toDateString()+' ">Here are todays events:</div>'
+						if(date.getMonth() == currentDate.getMonth()){
+							cell.innerHTML = '<a href="javascript:newDate('+date.getDate()+')">'+date.getDate()+'</a>';
+						}else{
+							cell.innerHTML = date.getDate();
+						}
+						//var buttonString = '<input type="button" value="0 events" onclick=showdialog() /><div id="mydialog" title="Events for'+date.toDateString()+' ">Here are todays events:</div>'
 						if (jsonData.hasEvents) { // in PHP, this was the "success" key in the associative array; in JavaScript, it's the .success property of jsonData
 							var events = jsonData.events;
+							cell.innerHTML += " " + events.length + " events";
 							//update button if there are events
-							var dialogDiv = '<div id="mydialog" title="Events for'+date.toDateString()+' ">Here are todays events:</div>'
-							var buttonString = '<input type="button" value="'+ events.length +' events" onclick=showdialog() />'+dialogDiv;
-							// for(var i in events){
-							// 	var title = events[i].title;
-							// 	var time = events[i].time;
-							// 	var eventHTML = title + " " + time + "<br>";
-							// 	cell.innerHTML += eventHTML;
-							// }
+							//var dialogDiv = '<div id="mydialog" title="Events for'+date.toDateString()+' ">Here are todays events:</div>'
+							//var buttonString = '<input type="button" value="'+ events.length +' events" onclick=showdialog() />'+dialogDiv;
 		        }
-						cell.innerHTML += buttonString;
+						//cell.innerHTML += buttonString;
 			    }, false); // Bind the callback to the load event
 			    xmlHttp.send(dateString); // Send the data
+				}
+
+				function showEvents(){
+					var dateString = "day=" + encodeURIComponent(currentDate.getDate()) + "&month=" + encodeURIComponent(currentDate.getMonth()) + "&year=" + encodeURIComponent(currentDate.getFullYear());
+					var xmlHttp = new XMLHttpRequest(); // Initialize our XMLHttpRequest instance
+			    xmlHttp.open("POST", "events5.php", true); // Starting a POST request (NEVER send passwords as GET variables!!!)
+			    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests
+			    xmlHttp.addEventListener("load", function(event) {
+			      var jsonData = JSON.parse(event.target.responseText); // parse the JSON into a JavaScript object
+						var events = jsonData.events;
+						var eventLog = document.getElementById("events");
+						var eventHTML = "";
+						for(var i in events){
+							var title = events[i].title;
+							var time = events[i].time;
+							eventHTML += title + " " + time + "<br>";
+						}
+						eventLog.innerHTML = eventHTML;
+			    }, false); // Bind the callback to the load event
+			    xmlHttp.send(dateString); // Send the data
+				}
+
+				function newDate(date){
+					var table = document.getElementById("calendar");
+					var week = table.rows[Math.floor((currentDate.getDate()-currentDate.getDay()-1)/7)+2].cells[currentDate.getDay()].bgColor = "White";
+					currentDate.setDate(date);
+					week = table.rows[Math.floor((currentDate.getDate()-currentDate.getDay()-1)/7)+2].cells[currentDate.getDay()].bgColor = "LightBlue";
+					showEvents();
 				}
 
 				document.getElementById("calendar").style.height = "200px";
@@ -129,13 +158,20 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 				var currentMonth = new Month(currentDate.getFullYear(), currentDate.getMonth());
 				$("#prevBtn").click(function() {
 					currentMonth = currentMonth.prevMonth();
+					currentDate.setMonth(currentMonth.month);
+					currentDate.setDate(1);
 					display();
+					showEvents();
 				});
 				$("#nextBtn").click(function() {
 					currentMonth = currentMonth.nextMonth();
+					currentDate.setMonth(currentMonth.month);
+					currentDate.setDate(1);
 					display();
+					showEvents();
 				});
 				document.addEventListener("DOMContentLoaded", display, false);
+				document.addEventListener("DOMContentLoaded", showEvents, false);
 			</script>
 		</div>
 	</div>
