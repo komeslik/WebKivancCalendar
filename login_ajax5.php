@@ -1,5 +1,5 @@
 <?php
-require 'database3.php';
+require 'database5.php';
 header("Content-Type: application/json"); // Since we are sending a JSON response here (not an HTML document), set the MIME Type to application/json
 
 $username = $_POST['username'];
