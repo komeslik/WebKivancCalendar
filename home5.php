@@ -75,9 +75,9 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 					for (week = 0; week < currentMonth.getWeeks().length; week++) {
 						var row = table.insertRow(-1);
 						for (day = 0; day < 7; day++) {
-							cell = row.insertCell(day);
+							var cell = row.insertCell(day);
 							var date = currentMonth.getWeeks()[week].getDates()[day];
-							cell.innerHTML = date.getDate();
+							getEvents(cell, date);
 							if (date.getMonth() != currentMonth.month) {
 								cell.bgColor = "LightGrey";
 							}else if (date.getDate() == currentDate.getDate()) {
@@ -86,9 +86,31 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 						}
 					}
 				}
+
+				function getEvents(cell, date){
+					var dateString = "day=" + encodeURIComponent(date.getDate()) + "&month=" + encodeURIComponent(date.getMonth()) + "&year=" + encodeURIComponent(date.getFullYear());
+					var xmlHttp = new XMLHttpRequest(); // Initialize our XMLHttpRequest instance
+			    xmlHttp.open("POST", "events5.php", true); // Starting a POST request (NEVER send passwords as GET variables!!!)
+			    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests
+			    xmlHttp.addEventListener("load", function(event) {
+			      var jsonData = JSON.parse(event.target.responseText); // parse the JSON into a JavaScript object
+						cell.innerHTML = date.getDate();
+						if (jsonData.hasEvents) { // in PHP, this was the "success" key in the associative array; in JavaScript, it's the .success property of jsonData
+							var events = jsonData.events;
+							for(var i in events){
+								var title = events[i].title;
+								var time = events[i].time;
+								var eventHTML = "<p>" + title + " " + time + "</p><br>";
+								cell.innerHTML += eventHTML;
+							}
+		        }
+			    }, false); // Bind the callback to the load event
+			    xmlHttp.send(dateString); // Send the data
+				}
+
 				document.getElementById("calendar").style.height = "200px";
 				document.getElementById("calendar").createCaption();
-				var currentMonth = new Month(2016, 9);
+				var currentMonth = new Month(2016, 10);
 				var currentDate = new Date();
 				$("#prevBtn").click(function() {
 					currentMonth = currentMonth.prevMonth();
