@@ -58,7 +58,7 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 			function display() {
 				var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 				var table = document.getElementById("calendar");
-				table.caption.innerHTML = months[currentMonth.month];
+				table.caption.innerHTML = months[currentMonth.month] + " " +currentMonth.year;
 				var rows = table.rows;
 				while (1 < rows.length){
 					table.deleteRow(1);
