@@ -80,6 +80,8 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 							cell.innerHTML = date.getDate();
 							if (date.getMonth() != currentMonth.month) {
 								cell.bgColor = "LightGrey";
+							}else if (date.getDate() == currentDate.getDate()) {
+								cell.bgColor = "LightBlue";
 							}
 						}
 					}
@@ -87,6 +89,7 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 				document.getElementById("calendar").style.height = "200px";
 				document.getElementById("calendar").createCaption();
 				var currentMonth = new Month(2016, 9);
+				var currentDate = new Date();
 				$("#prevBtn").click(function() {
 					currentMonth = currentMonth.prevMonth();
 					display();
