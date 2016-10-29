@@ -71,7 +71,10 @@
 				</tr>
 			</table>
 		</div>
-		<div id="events">
+		<div id="dayEvents">
+			<div id="eventHeader"></div>
+			<div id="events"></div>
+			<button id="new_event_btn">New Event</button>
 			<script type="text/javascript">
 			(function(){Date.prototype.deltaDays=function(c){return new Date(this.getFullYear(),this.getMonth(),this.getDate()+c)};Date.prototype.getSunday=function(){return this.deltaDays(-1*this.getDay())}})();
 function Week(c){this.sunday=c.getSunday();this.nextWeek=function(){return new Week(this.sunday.deltaDays(7))};this.prevWeek=function(){return new Week(this.sunday.deltaDays(-7))};this.contains=function(b){return this.sunday.valueOf()===b.getSunday().valueOf()};this.getDates=function(){for(var b=[],a=0;7>a;a++)b.push(this.sunday.deltaDays(a));return b}}
@@ -132,6 +135,7 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 			    xmlHttp.addEventListener("load", function(event) {
 			      var jsonData = JSON.parse(event.target.responseText); // parse the JSON into a JavaScript object
 						var events = jsonData.events;
+						document.getElementById("eventHeader").innerHTML="<h2>Events for "+currentDate.toDateString()+"</h2>";
 						var eventLog = document.getElementById("events");
 						var eventHTML = "";
 						for(var i in events){
