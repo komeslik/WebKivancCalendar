@@ -35,6 +35,7 @@ function loginAjax(event) {
             alert("You've been Logged In!");
 						$("#login").hide();
 			      $("#logout").show();
+						$("#dayEvents").show();
 						location.reload();
         } else {
             alert("You were not logged in.  " + jsonData.message);

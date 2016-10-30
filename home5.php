@@ -72,19 +72,18 @@
 			<input type="button" value="new event" onclick=showdialog() />
    		<div id="mydialog" title="Add New Event">
 				<a>Time:</a>
-				<input type="time" name="time"><br>
+				<input type="time" id="time"><br>
 				<a>Title:</a>
 				<input type="text" id="title"><br>
 				<a>Note:</a>
-				<input type="note" id="note"><br>
+				<input type="text" id="note"><br>
 				<a>Tags:</a><br>
 				<label><input name="tag" id="work" type="radio" value="work" /> work </label><br />
-		<label><input name="tag" id="academic" type="radio" value="academic" /> academic</label><br />
-		<label><input name="tag" id="social" type="radio" value="social" /> social </label><br />
-		<label><input name="tag" id="family" type="radio" value="family" /> family</label><br />
-		<label><input name="tag" id="undefined" type="radio" value="undefined" /> undefined </label><br />
+				<label><input name="tag" id="academic" type="radio" value="academic" /> academic</label><br />
+				<label><input name="tag" id="social" type="radio" value="social" /> social </label><br />
+				<label><input name="tag" id="family" type="radio" value="family" /> family</label><br />
+				<label><input name="tag" id="undefined" type="radio" value="undefined" /> undefined </label><br />
 			</div>
-
 		</div>
 			<script type="text/javascript">
 			(function(){Date.prototype.deltaDays=function(c){return new Date(this.getFullYear(),this.getMonth(),this.getDate()+c)};Date.prototype.getSunday=function(){return this.deltaDays(-1*this.getDay())}})();
@@ -114,7 +113,7 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 				}
 
 				function getEvents(cell, date){
-					var dateString = "day=" + encodeURIComponent(date.getDate()) + "&month=" + encodeURIComponent(date.getMonth()) + "&year=" + encodeURIComponent(date.getFullYear());
+					var dateString = "day=" + encodeURIComponent(date.getDate()) + "&month=" + encodeURIComponent(date.getMonth()+1) + "&year=" + encodeURIComponent(date.getFullYear());
 					var xmlHttp = new XMLHttpRequest(); // Initialize our XMLHttpRequest instance
 			    xmlHttp.open("POST", "events5.php", true); // Starting a POST request (NEVER send passwords as GET variables!!!)
 			    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests
@@ -139,7 +138,7 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 				}
 
 				function showEvents(){
-					var dateString = "day=" + encodeURIComponent(currentDate.getDate()) + "&month=" + encodeURIComponent(currentDate.getMonth()) + "&year=" + encodeURIComponent(currentDate.getFullYear());
+					var dateString = "day=" + encodeURIComponent(currentDate.getDate()) + "&month=" + encodeURIComponent(currentDate.getMonth()+1) + "&year=" + encodeURIComponent(currentDate.getFullYear());
 					var xmlHttp = new XMLHttpRequest(); // Initialize our XMLHttpRequest instance
 			    xmlHttp.open("POST", "events5.php", true); // Starting a POST request (NEVER send passwords as GET variables!!!)
 			    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests
@@ -162,8 +161,33 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 				{
 					$("#mydialog").dialog({
 						buttons: {
-			        "Create an account": function() {
-
+			        "Create an event": function() {
+								var time = document.getElementById("time").value;
+								var title = document.getElementById("title").value;
+								var note = document.getElementById("note").value;
+								var tag_radio_pointers = document.getElementsByName("tag");
+								var which_tag = null;
+								for(i = 0; i < tag_radio_pointers.length; i++){
+									if (tag_radio_pointers[i].checked) {
+										which_tag = tag_radio_pointers[i].value;
+										break;
+									}
+								}
+								var dateString = currentMonth.year+"-"+(currentMonth.month+1)+"-"+currentDate.getDate();
+								var dataString = "date="+encodeURIComponent(dateString)+"&time="+encodeURIComponent(time)+"&title="+encodeURIComponent(title)+"&note="+encodeURIComponent(note)+"&category="+encodeURIComponent(which_tag);
+								var xmlHttp = new XMLHttpRequest(); // Initialize our XMLHttpRequest instance
+						    xmlHttp.open("POST", "new_event5.php", true); // Starting a POST request (NEVER send passwords as GET variables!!!)
+						    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests
+						    xmlHttp.addEventListener("load", function(event) {
+						        var jsonData = JSON.parse(event.target.responseText); // parse the JSON into a JavaScript object
+						        if (jsonData.success) { // in PHP, this was the "success" key in the associative array; in JavaScript, it's the .success property of jsonData
+						            display();
+												showEvents();
+						        } else {
+						            alert("You were not logged in.  " + jsonData.message);
+						        }
+						    }, false); // Bind the callback to the load event
+						    xmlHttp.send(dataString); // Send the data
 
 			          $("#mydialog").dialog( "close" );
 			        }
@@ -172,9 +196,9 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 				}
 				function newDate(date){
 					var table = document.getElementById("calendar");
-					var week = table.rows[Math.floor((currentDate.getDate()-currentDate.getDay()-1)/7)+2].cells[currentDate.getDay()].bgColor = "White";
+					var week = table.rows[Math.floor((currentDate.getDate()-currentDate.getDay()-2)/7)+2].cells[currentDate.getDay()].bgColor = "White";
 					currentDate.setDate(date);
-					week = table.rows[Math.floor((currentDate.getDate()-currentDate.getDay()-1)/7)+2].cells[currentDate.getDay()].bgColor = "LightBlue";
+					week = table.rows[Math.floor((currentDate.getDate()-currentDate.getDay()-2)/7)+2].cells[currentDate.getDay()].bgColor = "LightBlue";
 					showEvents();
 				}
 
@@ -185,6 +209,7 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 				$("#prevBtn").click(function() {
 					currentMonth = currentMonth.prevMonth();
 					currentDate.setMonth(currentMonth.month);
+					currentDate.setYear(currentMonth.year);
 					currentDate.setDate(1);
 					display();
 					showEvents();
@@ -192,6 +217,7 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 				$("#nextBtn").click(function() {
 					currentMonth = currentMonth.nextMonth();
 					currentDate.setMonth(currentMonth.month);
+					currentDate.setYear(currentMonth.year);
 					currentDate.setDate(1);
 					display();
 					showEvents();
