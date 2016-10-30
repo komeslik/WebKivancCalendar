@@ -159,7 +159,8 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 							var category = events[i].category;
 							var id = events[i].event_id;
 							var editDiv = '<div id="mydialog'+id+'" class="mydialogId" title="Edit Event"><a>Time:</a><input type="time" id="time'+id+'"><br><a>Title:</a><input type="text" id="title'+id+'"><br><a>Note:</a><input type="text" id="note'+id+'"><br><a>Tags:</a><br><label><input name="tag'+id+'" id="work" type="radio" value="work" /> work </label><br /><label><input name="tag'+id+'" id="academic" type="radio" value="academic" /> academic</label><br /><label><input name="tag'+id+'" id="social" type="radio" value="social" /> social </label><br /><label><input name="tag'+id+'" id="family" type="radio" value="family" /> family</label><br /><label><input name="tag'+id+'" id="undefined" type="radio" value="undefined" /> undefined </label></div>';
-							eventHTML += "<div id='"+category+"'>"+time+" "+title+"</div><input type='button' value='Edit Event' onclick=editEvent("+id+") />"+editDiv+"<input type='button' value='Delete Event' onclick=deleteEvent("+id+") /><br>";
+							var shareDiv = "<div id='sharedialog"+id+"' class='sharedialog' title='Share Event'><a>User:</a><input type='text' id='user"+id+"'></div>";
+							eventHTML += "<div id='"+category+"'>"+time+" "+title+"</div><input type='button' value='Edit Event' onclick=editEvent("+id+") />"+editDiv+"<input type='button' value='Share Event' onclick=shareEvent("+id+") />"+shareDiv+"<input type='button' value='Delete Event' onclick=deleteEvent("+id+") /><br>";
 						}
 						eventLog.innerHTML = eventHTML;
 			    }, false); // Bind the callback to the load event
@@ -221,6 +222,11 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 			      }
 					});
 				}
+
+				function shareEvent() {
+
+				}
+
 				function showdialog() {
 					$("#mydialog").dialog({
 						buttons: {

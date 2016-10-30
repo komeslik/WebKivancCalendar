@@ -2,9 +2,9 @@
   require 'database5.php';
   header("Content-Type: application/json"); // Since we are sending a JSON response here (not an HTML document), set the MIME Type to application/json
   session_start();
-  
-  $newEvent = $mysqli->prepare("INSERT INTO events (username, date, time, title, note, category) VALUES (?, ?, ?, ?, ?, ?)");
-  $newEvent->bind_param('ssssss', $user, $date, $time, $title, $note, $category);
+
+  $newEvent = $mysqli->prepare("INSERT INTO events (username, date, time, title, note, category, shared) VALUES (?, ?, ?, ?, ?, ?, ?)");
+  $newEvent->bind_param('sssssss', $user, $date, $time, $title, $note, $category, $user);
   $user = (string)$_SESSION['currentUser'];
   $date = (string)$_POST['date'];
   $time = (string)$_POST['time'];
