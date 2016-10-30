@@ -37,9 +37,11 @@
 <body>
 	<div id="main">
 		<?php
+			ini_set("session.cookie_httponly", 1);
 			session_start();
 			if(isset($_SESSION['currentUser'])){
-				echo "Hi, ".$_SESSION['currentUser'];
+				$html_safe_currentUser = htmlentities($_SESSION['currentUser']);
+				echo "Hi, ".$html_safe_currentUser;
 			}
 		?>
 		<div id="login">
@@ -88,6 +90,7 @@
 				<label><input name="tag" id="social" type="radio" value="social" /> social </label><br />
 				<label><input name="tag" id="family" type="radio" value="family" /> family</label><br />
 				<label><input name="tag" id="undefined" type="radio" value="undefined" /> undefined </label><br />
+				<input type="hidden" id="token" name="token" value="<?php echo $_SESSION['token'];?>" />
 			</div>
 		</div>
 			<script type="text/javascript">
@@ -160,7 +163,7 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 							var id = events[i].event_id;
 							var editDiv = '<div id="mydialog'+id+'" class="mydialogId" title="Edit Event"><a>Time:</a><input type="time" id="time'+id+'"><br><a>Title:</a><input type="text" id="title'+id+'"><br><a>Note:</a><input type="text" id="note'+id+'"><br><a>Tags:</a><br><label><input name="tag'+id+'" id="work" type="radio" value="work" /> work </label><br /><label><input name="tag'+id+'" id="academic" type="radio" value="academic" /> academic</label><br /><label><input name="tag'+id+'" id="social" type="radio" value="social" /> social </label><br /><label><input name="tag'+id+'" id="family" type="radio" value="family" /> family</label><br /><label><input name="tag'+id+'" id="undefined" type="radio" value="undefined" /> undefined </label></div>';
 							var shareDiv = "<div id='sharedialog"+id+"' class='sharedialog' title='Share Event'><a>User:</a><input type='text' id='user"+id+"'></div>";
-							eventHTML += "<div id='"+category+"'>"+time+" "+title+"</div><input type='button' value='Edit Event' onclick=editEvent("+id+") />"+editDiv+"<input type='button' value='Share Event' onclick=shareEvent("+id+") />"+shareDiv+"<input type='button' value='Delete Event' onclick=deleteEvent("+id+") /><br>";
+							eventHTML += "<div id='"+category+"'>"+time+" "+title+"</div><input type='button' value='Edit Event' onclick=editEvent("+id+") />"+editDiv+"<input type='button' value='Delete Event' onclick=deleteEvent("+id+") /><br>";
 						}
 						eventLog.innerHTML = eventHTML;
 			    }, false); // Bind the callback to the load event
@@ -234,6 +237,7 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 								var time = document.getElementById("time").value;
 								var title = document.getElementById("title").value;
 								var note = document.getElementById("note").value;
+								var token = document.getElementById("token").value;
 								var tag_radio_pointers = document.getElementsByName("tag");
 								var which_tag = null;
 								for(i = 0; i < tag_radio_pointers.length; i++){
@@ -243,7 +247,7 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 									}
 								}
 								var dateString = currentMonth.year+"-"+(currentMonth.month+1)+"-"+currentDate.getDate();
-								var dataString = "date="+encodeURIComponent(dateString)+"&time="+encodeURIComponent(time)+"&title="+encodeURIComponent(title)+"&note="+encodeURIComponent(note)+"&category="+encodeURIComponent(which_tag);
+								var dataString = "date="+encodeURIComponent(dateString)+"&time="+encodeURIComponent(time)+"&title="+encodeURIComponent(title)+"&note="+encodeURIComponent(note)+"&category="+encodeURIComponent(which_tag)+"&token="+encodeURIComponent(token);
 								alert(dataString);
 								var xmlHttp = new XMLHttpRequest(); // Initialize our XMLHttpRequest instance
 						    xmlHttp.open("POST", "new_event5.php", true); // Starting a POST request (NEVER send passwords as GET variables!!!)

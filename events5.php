@@ -1,5 +1,6 @@
 <?php
   require 'database5.php';
+  ini_set("session.cookie_httponly", 1);
   session_start();
   $day = $_POST['day'];
   $month = $_POST['month'];
@@ -10,7 +11,7 @@
   }else {
     $user = "";
   }
-  $stmt = $mysqli->prepare("SELECT shared, title, time, category, event_id FROM events WHERE shared LIKE %?% AND date= ? ORDER BY time ASC");
+  $stmt = $mysqli->prepare("SELECT shared, title, time, category, event_id FROM events WHERE username LIKE ? AND date= ? ORDER BY time ASC");
   $stmt->bind_param('ss', $user, $date);
   $date = (string)$year."-".$month."-".$day;
   $stmt->execute();
@@ -19,9 +20,9 @@
 
   //create an array of events where each element is an event row from the query
   while ($row = $result->fetch_assoc()) {
-    if(preg_match('/\b'.$user.'\b/g', $row['shared']){
-      $events[] = $row;
-    }
+    // if(preg_match('/\b'.$user.'\b/g', $row['shared']){
+     $events[] = $row;
+    // }
   }
   if(count($events) > 0){
     echo json_encode(

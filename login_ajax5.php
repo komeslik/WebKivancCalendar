@@ -22,6 +22,7 @@ if(preg_match('/^[\w_\-]+$/', $username) || preg_match('/^[\w_\-]+$/', $password
 	// Compare the submitted password to the actual password hash
 	if(crypt($pwd_guess, $pwd_hash)==$pwd_hash){
 		// Login succeeded!
+		ini_set("session.cookie_httponly", 1);
 		session_start();
 		$_SESSION['currentUser'] = $user;
 		$_SESSION['token'] = substr(md5(rand()), 0, 10); // generate a 10-character random string
