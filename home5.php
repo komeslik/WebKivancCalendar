@@ -70,7 +70,7 @@
 		<div id="dayEvents">
 			<div id="eventHeader"></div>
 			<div id="events"></div>
-			<input type="button" value="new event" onclick=showdialog() />
+			<input type="button" value="New Event" onclick=showdialog() />
    		<div id="mydialog" title="Add New Event">
 				<a>Time:</a>
 				<input type="time" id="time"><br>
@@ -177,6 +177,7 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 			    }, false); // Bind the callback to the load event
 			    xmlHttp.send(idString); // Send the data
 				}
+
 				function editEvent(id) {
 					$("#mydialog2").dialog({
 						buttons: {
@@ -193,6 +194,7 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 									}
 								}
 								var dateString = currentMonth.year+"-"+(currentMonth.month+1)+"-"+currentDate.getDate();
+								alert(""+id+dateString+time+title+note+which_tag);
 								var dataString = "id="+encodeURIComponent(id)+"&date="+encodeURIComponent(dateString)+"&time="+encodeURIComponent(time)+"&title="+encodeURIComponent(title)+"&note="+encodeURIComponent(note)+"&category="+encodeURIComponent(which_tag);
 								var xmlHttp = new XMLHttpRequest(); // Initialize our XMLHttpRequest instance
 								xmlHttp.open("POST", "edit_event5.php", true); // Starting a POST request (NEVER send passwords as GET variables!!!)
@@ -203,7 +205,7 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 												display();
 												showEvents();
 										} else {
-												alert("Event failed to create.");
+												alert("Event failed to update.");
 										}
 								}, false); // Bind the callback to the load event
 								xmlHttp.send(dataString); // Send the data
