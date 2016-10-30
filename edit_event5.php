@@ -1,7 +1,10 @@
 <?php
   require 'database5.php';
   header("Content-Type: application/json"); // Since we are sending a JSON response here (not an HTML document), set the MIME Type to application/json
-
+  session_start();
+  if($_SESSION['token'] !== $_POST['token']){
+    die("Request forgery detected");
+  }
   $date = (string)$_POST['date'];
   $time = (string)$_POST['time'];
   $title = (string)$_POST['title'];
