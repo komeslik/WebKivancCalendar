@@ -10,10 +10,12 @@ function verify_user_Ajax(event) {
         //Hide the sections not needed (login and registration sections, and display the calendar)
         $("#login").hide();
         $("#logout").show();
+				$("#dayEvents").show();
       }else{
         //Show login, hide logout
         $("#login").show();
         $("#logout").hide();
+				$("#dayEvents").hide();
       }
 		}, false);
     xmlHttp.send(null);
@@ -73,6 +75,7 @@ function logoutAjax(event){
     xmlHttp.addEventListener("load", function(event) {
 			$("#login").show();
       $("#logout").hide();
+			$("#dayEvents").hide();
 			location.reload();
 		}, false);
 		xmlHttp.send(null); // Send the data
