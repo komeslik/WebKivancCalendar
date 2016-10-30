@@ -21,6 +21,7 @@
 			padding: 10px;
 		}
 		#mydialog { display:none }
+		#mydialog2 { display:none }
 	</style>
 <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/start/jquery-ui.css"
  type="text/css" rel="Stylesheet" />
@@ -152,7 +153,8 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 							var title = events[i].title;
 							var time = events[i].time;
 							var id = events[i].event_id;
-							eventHTML += title + " " + time + "<input type='button' value='Delete Event' onclick=deleteEvent("+id+") /><br>";
+							var editDiv = '<div id="mydialog2" title="Edit Event"><a>Time:</a><input type="time" id="time2"><br><a>Title:</a><input type="text" id="title2"><br><a>Note:</a><input type="text" id="note2"><br><a>Tags:</a><br><label><input name="tag2" id="work2" type="radio" value="work" /> work </label><br /><label><input name="tag2" id="academic2" type="radio" value="academic" /> academic</label><br /><label><input name="tag2" id="social2" type="radio" value="social" /> social </label><br /><label><input name="tag2" id="family2" type="radio" value="family" /> family</label><br /><label><input name="tag2" id="undefined2" type="radio" value="undefined" /> undefined </label></div>';
+							eventHTML += title + " " + time + "<input type='button' value='Edit Event"+id+"' onclick=editEvent("+id+") />"+editDiv+"<input type='button' value='Delete Event' onclick=deleteEvent("+id+") /><br>";
 						}
 						eventLog.innerHTML = eventHTML;
 			    }, false); // Bind the callback to the load event
@@ -175,7 +177,42 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 			    }, false); // Bind the callback to the load event
 			    xmlHttp.send(idString); // Send the data
 				}
+				function editEvent(id) {
+					$("#mydialog2").dialog({
+						buttons: {
+			        "Edit event": function() {
+								var time = document.getElementById("time2").value;
+								var title = document.getElementById("title2").value;
+								var note = document.getElementById("note2").value;
+								var tag_radio_pointers = document.getElementsByName("tag2");
+								var which_tag = null;
+								for(i = 0; i < tag_radio_pointers.length; i++){
+									if (tag_radio_pointers[i].checked) {
+										which_tag = tag_radio_pointers[i].value;
+										break;
+									}
+								}
+								var dateString = currentMonth.year+"-"+(currentMonth.month+1)+"-"+currentDate.getDate();
+								var dataString = "id="+encodeURIComponent(id)+"&date="+encodeURIComponent(dateString)+"&time="+encodeURIComponent(time)+"&title="+encodeURIComponent(title)+"&note="+encodeURIComponent(note)+"&category="+encodeURIComponent(which_tag);
+								var xmlHttp = new XMLHttpRequest(); // Initialize our XMLHttpRequest instance
+								xmlHttp.open("POST", "edit_event5.php", true); // Starting a POST request (NEVER send passwords as GET variables!!!)
+								xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests
+								xmlHttp.addEventListener("load", function(event) {
+										var jsonData = JSON.parse(event.target.responseText); // parse the JSON into a JavaScript object
+										if (jsonData.success) { // in PHP, this was the "success" key in the associative array; in JavaScript, it's the .success property of jsonData
+												display();
+												showEvents();
+										} else {
+												alert("Event failed to create.");
+										}
+								}, false); // Bind the callback to the load event
+								xmlHttp.send(dataString); // Send the data
 
+			          $("#mydialog2").dialog( "close" );
+			        }
+			      }
+					});
+				}
 				function showdialog() {
 					$("#mydialog").dialog({
 						buttons: {
