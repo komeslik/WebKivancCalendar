@@ -10,7 +10,7 @@
   }else {
     $user = "";
   }
-  $stmt = $mysqli->prepare("SELECT title, time FROM events WHERE username= ? AND date= ? ORDER BY time ASC");
+  $stmt = $mysqli->prepare("SELECT title, time, event_id FROM events WHERE username= ? AND date= ? ORDER BY time ASC");
   $stmt->bind_param('ss', $user, $date);
   $date = (string)$year."-".$month."-".$day;
   $stmt->execute();

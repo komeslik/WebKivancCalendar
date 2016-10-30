@@ -151,14 +151,32 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 						for(var i in events){
 							var title = events[i].title;
 							var time = events[i].time;
-							eventHTML += title + " " + time + "<br>";
+							var id = events[i].event_id;
+							eventHTML += title + " " + time + "<input type='button' value='Delete Event' onclick=deleteEvent("+id+") /><br>";
 						}
 						eventLog.innerHTML = eventHTML;
 			    }, false); // Bind the callback to the load event
 			    xmlHttp.send(dateString); // Send the data
 				}
-				function showdialog()
-				{
+
+				function deleteEvent(id){
+					var idString = "id=" + encodeURIComponent(id);
+					var xmlHttp = new XMLHttpRequest(); // Initialize our XMLHttpRequest instance
+			    xmlHttp.open("POST", "delete_event5.php", true); // Starting a POST request (NEVER send passwords as GET variables!!!)
+			    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests
+			    xmlHttp.addEventListener("load", function(event) {
+			      var jsonData = JSON.parse(event.target.responseText); // parse the JSON into a JavaScript object
+						if(jsonData.success){
+							display();
+							showEvents();
+						} else {
+							alert("Event failed to delete.");
+						}
+			    }, false); // Bind the callback to the load event
+			    xmlHttp.send(idString); // Send the data
+				}
+
+				function showdialog() {
 					$("#mydialog").dialog({
 						buttons: {
 			        "Create an event": function() {
@@ -184,7 +202,7 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 						            display();
 												showEvents();
 						        } else {
-						            alert("You were not logged in.  " + jsonData.message);
+						            alert("Event failed to create.");
 						        }
 						    }, false); // Bind the callback to the load event
 						    xmlHttp.send(dataString); // Send the data
@@ -194,6 +212,7 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 			      }
 					});
 				}
+
 				function newDate(date){
 					var table = document.getElementById("calendar");
 					var week = table.rows[Math.floor((currentDate.getDate()-currentDate.getDay()-2)/7)+2].cells[currentDate.getDay()].bgColor = "White";
