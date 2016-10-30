@@ -26,12 +26,7 @@
  type="text/css" rel="Stylesheet" />
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
-<script type="text/javascript">
-	function showdialog()
-	{
-		$("#mydialog").dialog();
-	}
-</script>
+
 </head>
 
 <body>
@@ -74,7 +69,23 @@
 		<div id="dayEvents">
 			<div id="eventHeader"></div>
 			<div id="events"></div>
-			<button id="new_event_btn">New Event</button>
+			<input type="button" value="new event" onclick=showdialog() />
+   		<div id="mydialog" title="Add New Event">
+				<a>Time:</a>
+				<input type="time" name="time"><br>
+				<a>Title:</a>
+				<input type="text" id="title"><br>
+				<a>Note:</a>
+				<input type="note" id="note"><br>
+				<a>Tags:</a><br>
+				<label><input name="tag" id="work" type="radio" value="work" /> work </label><br />
+		<label><input name="tag" id="academic" type="radio" value="academic" /> academic</label><br />
+		<label><input name="tag" id="social" type="radio" value="social" /> social </label><br />
+		<label><input name="tag" id="family" type="radio" value="family" /> family</label><br />
+		<label><input name="tag" id="undefined" type="radio" value="undefined" /> undefined </label><br />
+			</div>
+
+		</div>
 			<script type="text/javascript">
 			(function(){Date.prototype.deltaDays=function(c){return new Date(this.getFullYear(),this.getMonth(),this.getDate()+c)};Date.prototype.getSunday=function(){return this.deltaDays(-1*this.getDay())}})();
 function Week(c){this.sunday=c.getSunday();this.nextWeek=function(){return new Week(this.sunday.deltaDays(7))};this.prevWeek=function(){return new Week(this.sunday.deltaDays(-7))};this.contains=function(b){return this.sunday.valueOf()===b.getSunday().valueOf()};this.getDates=function(){for(var b=[],a=0;7>a;a++)b.push(this.sunday.deltaDays(a));return b}}
@@ -82,7 +93,7 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 				function display() {
 					var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 					var table = document.getElementById("calendar");
-					table.caption.innerHTML = months[currentMonth.month] + " " +currentMonth.year;
+					table.caption.innerHTML = "<h2>"+months[currentMonth.month] + " " +currentMonth.year+"</h2>";
 					var rows = table.rows;
 					while (1 < rows.length){
 						table.deleteRow(1);
@@ -147,7 +158,18 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 			    }, false); // Bind the callback to the load event
 			    xmlHttp.send(dateString); // Send the data
 				}
+				function showdialog()
+				{
+					$("#mydialog").dialog({
+						buttons: {
+			        "Create an account": function() {
 
+
+			          $("#mydialog").dialog( "close" );
+			        }
+			      }
+					});
+				}
 				function newDate(date){
 					var table = document.getElementById("calendar");
 					var week = table.rows[Math.floor((currentDate.getDate()-currentDate.getDay()-1)/7)+2].cells[currentDate.getDay()].bgColor = "White";
@@ -177,7 +199,6 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 				document.addEventListener("DOMContentLoaded", display, false);
 				document.addEventListener("DOMContentLoaded", showEvents, false);
 			</script>
-		</div>
 	</div>
 </body>
 
