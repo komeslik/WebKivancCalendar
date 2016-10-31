@@ -5,7 +5,7 @@
 ### Sample Usernames for our Calendar
 
 - username: dgrossman password: pass
-- username: komeslik password: pass
+- username: komeslik password: 123
 
 ### Basic Instructions:
 - Click on a day to highlight it, then you'll be able to see the events on that day under the calendar. You can add/edit/delete events for that specific day there.
