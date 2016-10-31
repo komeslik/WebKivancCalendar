@@ -11,8 +11,10 @@
   }else {
     $user = "";
   }
-  $stmt = $mysqli->prepare("SELECT shared, note, title, time, category, event_id FROM events WHERE username LIKE ? AND date= ? ORDER BY time ASC");
-  $stmt->bind_param('ss', $user, $date);
+  $likeUser = '%'.$user.'%';
+  $stmt = $mysqli->prepare("SELECT shared, note, title, time, category, event_id FROM events WHERE shared LIKE ? AND date= ? ORDER BY time ASC");
+  $stmt->bind_param('ss', $likeUser, $date);
+  //$userString = "%".$user."%";
   $date = (string)$year."-".$month."-".$day;
   $stmt->execute();
   $result = $stmt->get_result();
@@ -20,9 +22,12 @@
 
   //create an array of events where each element is an event row from the query
   while ($row = $result->fetch_assoc()) {
-    // if(preg_match('/\b'.$user.'\b/g', $row['shared']){
-     $events[] = $row;
-    // }
+    $users = explode(",", $row['shared']);
+    foreach($users as $u){
+      if($u == $user){
+         $events[] = $row;
+      }
+    }
   }
   if(count($events) > 0){
     echo json_encode(

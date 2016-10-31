@@ -7,9 +7,8 @@
   $id = (string)$_POST['id'];
   $stmt->execute();
   $result = $stmt->get_result();
-  if($row = $result->fetch_assoc();){
-    $users = $row['shared'];
-    $users += $_POST['user'];
+  if($row = $result->fetch_assoc()){
+    $users = $row['shared'].",".$_POST['user'];
     $shareEvent = $mysqli->prepare("UPDATE events SET shared=? WHERE event_id=?");
     $shareEvent->bind_param('ss', $users, $id);
     $shareEvent->execute();

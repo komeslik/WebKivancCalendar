@@ -26,6 +26,8 @@
 		div#family { color: red; }
 		#mydialog { display:none }
 		.mydialogId { display:none }
+		.sharedialog { display:none }
+
 	</style>
 <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/start/jquery-ui.css"
  type="text/css" rel="Stylesheet" />
@@ -162,9 +164,9 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 							var category = events[i].category;
 							var note = events[i].note;
 							var id = events[i].event_id;
-							var editDiv = '<div id="mydialog'+id+'" class="mydialogId" title="Edit Event"><a>Time:</a><input type="time" value="'+time+'" id="time'+id+'"><br><a>Title:</a><input type="text" value="'+title+'" id="title'+id+'"><br><a>Note:</a><input type="text" value="'+note+'" id="note'+id+'"><br><input type="hidden" id="token'+id+'" name="token" value="'+'<?php echo $_SESSION["token"];?>'+'" /><a>Tags:</a><br><label><input name="tag'+id+'" id="work" type="radio" value="work" /> work </label><br /><label><input name="tag'+id+'" id="academic" type="radio" value="academic" /> academic</label><br /><label><input name="tag'+id+'" id="social" type="radio" value="social" /> social </label><br /><label><input name="tag'+id+'" id="family" type="radio" value="family" /> family</label><br /><label><input name="tag'+id+'" id="undefined" type="radio" value="undefined" /> undefined </label></div>';
+							var editDiv = '<div id="mydialog'+id+'" class="mydialogId" title="Edit Event"><a>Time:</a><input type="time" value="'+time+'" id="time'+id+'"><br><a>Title:</a><input type="text" value="'+title+'" id="title'+id+'"><br><a>Note:</a><input type="text" value="'+note+'" id="note'+id+'"><br><input type="hidden" id="token'+id+'" name="token" value="'+'<?php if(isset($_SESSION["token"])){ echo $_SESSION["token"]; }?>'+'" /><a>Tags:</a><br><label><input name="tag'+id+'" id="work" type="radio" value="work" /> work </label><br /><label><input name="tag'+id+'" id="academic" type="radio" value="academic" /> academic</label><br /><label><input name="tag'+id+'" id="social" type="radio" value="social" /> social </label><br /><label><input name="tag'+id+'" id="family" type="radio" value="family" /> family</label><br /><label><input name="tag'+id+'" id="undefined" type="radio" value="undefined" /> undefined </label></div>';
 							var shareDiv = "<div id='sharedialog"+id+"' class='sharedialog' title='Share Event'><a>User:</a><input type='text' id='user"+id+"'></div>";
-							eventHTML += "<div id='"+category+"'><h3>"+time+" "+title+"</h3> "+note+"</div><input type='button' value='Edit Event' onclick=editEvent("+id+") />"+editDiv+"<input type='button' value='Delete Event' onclick=deleteEvent("+id+") /><br>";
+							eventHTML += "<div id='"+category+"'><h3>"+time+" "+title+"</h3> "+note+"</div><input type='button' value='Edit Event' onclick=editEvent("+id+") />"+editDiv+"<input type='button' value='Share Event' onclick=shareEvent("+id+") />"+shareDiv+"<input type='button' value='Delete Event' onclick=deleteEvent("+id+") /><br>";
 						}
 						eventLog.innerHTML = eventHTML;
 			    }, false); // Bind the callback to the load event
@@ -207,7 +209,6 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 								}
 								var dateString = currentMonth.year+"-"+(currentMonth.month+1)+"-"+currentDate.getDate();
 								var dataString = "id="+encodeURIComponent(id)+"&date="+encodeURIComponent(dateString)+"&time="+encodeURIComponent(time)+"&title="+encodeURIComponent(title)+"&note="+encodeURIComponent(note)+"&category="+encodeURIComponent(which_tag)+"&token="+encodeURIComponent(token);
-								alert(dataString);
 								var xmlHttp = new XMLHttpRequest(); // Initialize our XMLHttpRequest instance
 								xmlHttp.open("POST", "edit_event5.php", true); // Starting a POST request (NEVER send passwords as GET variables!!!)
 								xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests
@@ -228,8 +229,29 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 					});
 				}
 
-				function shareEvent() {
-
+				function shareEvent(id) {
+					var dialogId = "#sharedialog"+id;
+					$(dialogId).dialog({
+						buttons: {
+			        "Share Event": function() {
+								var user = document.getElementById("user"+id).value;
+								var dataString = "id="+encodeURIComponent(id)+"&user="+encodeURIComponent(user);
+								var xmlHttp = new XMLHttpRequest(); // Initialize our XMLHttpRequest instance
+								xmlHttp.open("POST", "share_event5.php", true); // Starting a POST request (NEVER send passwords as GET variables!!!)
+								xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests
+								xmlHttp.addEventListener("load", function(event) {
+										var jsonData = JSON.parse(event.target.responseText); // parse the JSON into a JavaScript object
+										if (jsonData.success) { // in PHP, this was the "success" key in the associative array; in JavaScript, it's the .success property of jsonData
+												alert("Event shared successfully.")
+										} else {
+												alert("Event failed to share.");
+										}
+								}, false); // Bind the callback to the load event
+								xmlHttp.send(dataString); // Send the data
+			          $(dialogId).dialog( "close" );
+			        }
+			      }
+					});
 				}
 
 				function showdialog() {
