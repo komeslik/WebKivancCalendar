@@ -20,6 +20,13 @@
 			margin: 0;
 			padding: 10px;
 		}
+		table {
+			border: 1px solid black;
+			width: 100%;
+		}
+		th, td {
+			border: 1px solid black;
+		}
 		div#work { color: blue; }
 		div#academic { color: green; }
 		div#social { color: orange; }
@@ -60,7 +67,7 @@
 		<div id="cal">
 			<button id="prevBtn">Last Month</button>
 			<button id="nextBtn">Next Month</button>
-			<table border="1" width="100%" id="calendar">
+			<table id="calendar">
 				<tr>
 					<th style="height:15px;">Sunday</th>
 					<th>Monday</th>
@@ -83,7 +90,15 @@
 function Week(c){this.sunday=c.getSunday();this.nextWeek=function(){return new Week(this.sunday.deltaDays(7))};this.prevWeek=function(){return new Week(this.sunday.deltaDays(-7))};this.contains=function(b){return this.sunday.valueOf()===b.getSunday().valueOf()};this.getDates=function(){for(var b=[],a=0;7>a;a++)b.push(this.sunday.deltaDays(a));return b}}
 function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return new Month(c+Math.floor((b+1)/12),(b+1)%12)};this.prevMonth=function(){return new Month(c+Math.floor((b-1)/12),(b+11)%12)};this.getDateObject=function(a){return new Date(this.year,this.month,a)};this.getWeeks=function(){var a=this.getDateObject(1),b=this.nextMonth().getDateObject(0),c=[],a=new Week(a);for(c.push(a);!a.contains(b);)a=a.nextWeek(),c.push(a);return c}};
 				function display() {
-					document.getElementById("welcome").innerHTML="<?php if(isset($_SESSION['currentUser'])){$html_safe_currentUser = htmlentities($_SESSION['currentUser']);echo 'Hi, '.$html_safe_currentUser;}?>";
+					var xmlHttp = new XMLHttpRequest(); // Initialize our XMLHttpRequest instance
+			    xmlHttp.open("POST", "get_user5.php", true); // Starting a POST request (NEVER send passwords as GET variables!!!)
+			    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests
+			    xmlHttp.addEventListener("load", function(event) {
+						var jsonData = JSON.parse(event.target.responseText); // parse the JSON into a JavaScript object
+						var user = jsonData.user;
+						document.getElementById("welcome").innerHTML = "Hi, " + user;
+					}, false); // Bind the callback to the load event
+			    xmlHttp.send(null); // Send the data
 					document.getElementById("mydialog").innerHTML='<a>Time:</a><input type="time" id="time" value=""><br><a>Title:</a><input type="text" id="title" value=""><br><a>Note:</a><input type="text" id="note" value=""><br><a>Tags:</a><br><label><input name="tag" id="work" type="radio" value="work" /> Work </label><br /><label><input name="tag" id="academic" type="radio" value="academic" /> Academic</label><br /><label><input name="tag" id="social" type="radio" value="social" /> Social </label><br /><label><input name="tag" id="family" type="radio" value="family" /> Family</label><br /><label><input name="tag" id="undefined" type="radio" value="undefined" /> Undefined </label><br /><label><input type="checkbox" id="repeat" name="repeat"> Repeat Every Week </label><input type="hidden" id="token" name="token" value="<?php if(isset($_SESSION["token"])){echo $_SESSION["token"];}?>" />'
 					var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 					var table = document.getElementById("calendar");
@@ -97,12 +112,12 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 						for (day = 0; day < 7; day++) {
 							var cell = row.insertCell(day);
 							var date = currentMonth.getWeeks()[week].getDates()[day];
-							getEvents(cell, date);
 							if (date.getMonth() != currentMonth.month) {
 								cell.bgColor = "LightGrey";
 							}else if (date.getDate() == currentDate.getDate()) {
 								cell.bgColor = "LightBlue";
 							}
+							getEvents(cell, date);
 						}
 					}
 				}
@@ -119,15 +134,10 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 						}else{
 							cell.innerHTML = date.getDate();
 						}
-						//var buttonString = '<input type="button" value="0 events" onclick=showdialog() /><div id="mydialog" title="Events for'+date.toDateString()+' ">Here are todays events:</div>'
 						if (jsonData.hasEvents) { // in PHP, this was the "success" key in the associative array; in JavaScript, it's the .success property of jsonData
 							var events = jsonData.events;
 							cell.innerHTML += " " + events.length + " events";
-							//update button if there are events
-							//var dialogDiv = '<div id="mydialog" title="Events for'+date.toDateString()+' ">Here are todays events:</div>'
-							//var buttonString = '<input type="button" value="'+ events.length +' events" onclick=showdialog() />'+dialogDiv;
-		        }
-						//cell.innerHTML += buttonString;
+						}
 			    }, false); // Bind the callback to the load event
 			    xmlHttp.send(dateString); // Send the data
 				}
@@ -305,17 +315,17 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 				var currentMonth = new Month(currentDate.getFullYear(), currentDate.getMonth());
 				$("#prevBtn").click(function() {
 					currentMonth = currentMonth.prevMonth();
+					currentDate.setDate(1);
 					currentDate.setMonth(currentMonth.month);
 					currentDate.setYear(currentMonth.year);
-					currentDate.setDate(1);
 					display();
 					showEvents();
 				});
 				$("#nextBtn").click(function() {
 					currentMonth = currentMonth.nextMonth();
+					currentDate.setDate(1);
 					currentDate.setMonth(currentMonth.month);
 					currentDate.setYear(currentMonth.year);
-					currentDate.setDate(1);
 					display();
 					showEvents();
 				});
