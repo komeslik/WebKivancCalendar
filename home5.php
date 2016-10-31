@@ -160,10 +160,11 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 							var title = events[i].title;
 							var time = events[i].time;
 							var category = events[i].category;
+							var note = events[i].note;
 							var id = events[i].event_id;
-							var editDiv = '<div id="mydialog'+id+'" class="mydialogId" title="Edit Event"><a>Time:</a><input type="time" id="time'+id+'"><br><a>Title:</a><input type="text" id="title'+id+'"><br><a>Note:</a><input type="text" id="note'+id+'"><br><input type="hidden" id="token'+id+'" name="token" value="'+'<?php echo $_SESSION["token"];?>'+'" /><a>Tags:</a><br><label><input name="tag'+id+'" id="work" type="radio" value="work" /> work </label><br /><label><input name="tag'+id+'" id="academic" type="radio" value="academic" /> academic</label><br /><label><input name="tag'+id+'" id="social" type="radio" value="social" /> social </label><br /><label><input name="tag'+id+'" id="family" type="radio" value="family" /> family</label><br /><label><input name="tag'+id+'" id="undefined" type="radio" value="undefined" /> undefined </label></div>';
+							var editDiv = '<div id="mydialog'+id+'" class="mydialogId" title="Edit Event"><a>Time:</a><input type="time" value="'+time+'" id="time'+id+'"><br><a>Title:</a><input type="text" value="'+title+'" id="title'+id+'"><br><a>Note:</a><input type="text" value="'+note+'" id="note'+id+'"><br><input type="hidden" id="token'+id+'" name="token" value="'+'<?php echo $_SESSION["token"];?>'+'" /><a>Tags:</a><br><label><input name="tag'+id+'" id="work" type="radio" value="work" /> work </label><br /><label><input name="tag'+id+'" id="academic" type="radio" value="academic" /> academic</label><br /><label><input name="tag'+id+'" id="social" type="radio" value="social" /> social </label><br /><label><input name="tag'+id+'" id="family" type="radio" value="family" /> family</label><br /><label><input name="tag'+id+'" id="undefined" type="radio" value="undefined" /> undefined </label></div>';
 							var shareDiv = "<div id='sharedialog"+id+"' class='sharedialog' title='Share Event'><a>User:</a><input type='text' id='user"+id+"'></div>";
-							eventHTML += "<div id='"+category+"'>"+time+" "+title+"</div><input type='button' value='Edit Event' onclick=editEvent("+id+") />"+editDiv+"<input type='button' value='Delete Event' onclick=deleteEvent("+id+") /><br>";
+							eventHTML += "<div id='"+category+"'><h3>"+time+" "+title+"</h3> "+note+"</div><input type='button' value='Edit Event' onclick=editEvent("+id+") />"+editDiv+"<input type='button' value='Delete Event' onclick=deleteEvent("+id+") /><br>";
 						}
 						eventLog.innerHTML = eventHTML;
 			    }, false); // Bind the callback to the load event

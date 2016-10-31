@@ -11,7 +11,7 @@
   }else {
     $user = "";
   }
-  $stmt = $mysqli->prepare("SELECT shared, title, time, category, event_id FROM events WHERE username LIKE ? AND date= ? ORDER BY time ASC");
+  $stmt = $mysqli->prepare("SELECT shared, note, title, time, category, event_id FROM events WHERE username LIKE ? AND date= ? ORDER BY time ASC");
   $stmt->bind_param('ss', $user, $date);
   $date = (string)$year."-".$month."-".$day;
   $stmt->execute();
