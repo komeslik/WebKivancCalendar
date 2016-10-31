@@ -39,6 +39,7 @@ function loginAjax(event) {
 			      $("#logout").show();
 						$("#dayEvents").show();
 						display();
+						showEvents();
         } else {
             alert("You were not logged in.  " + jsonData.message);
         }

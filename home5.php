@@ -40,12 +40,9 @@
 	<div id="main">
 		<?php
 			ini_set("session.cookie_httponly", 1);
-			session_start();
-			if(isset($_SESSION['currentUser'])){
-				$html_safe_currentUser = htmlentities($_SESSION['currentUser']);
-				echo "Hi, ".$html_safe_currentUser;
-			}
+	  	session_start();
 		?>
+		<div id="welcome"></div>
 		<div id="login">
 			<p>
 				<a>Username:</a>
@@ -100,6 +97,7 @@
 function Week(c){this.sunday=c.getSunday();this.nextWeek=function(){return new Week(this.sunday.deltaDays(7))};this.prevWeek=function(){return new Week(this.sunday.deltaDays(-7))};this.contains=function(b){return this.sunday.valueOf()===b.getSunday().valueOf()};this.getDates=function(){for(var b=[],a=0;7>a;a++)b.push(this.sunday.deltaDays(a));return b}}
 function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return new Month(c+Math.floor((b+1)/12),(b+1)%12)};this.prevMonth=function(){return new Month(c+Math.floor((b-1)/12),(b+11)%12)};this.getDateObject=function(a){return new Date(this.year,this.month,a)};this.getWeeks=function(){var a=this.getDateObject(1),b=this.nextMonth().getDateObject(0),c=[],a=new Week(a);for(c.push(a);!a.contains(b);)a=a.nextWeek(),c.push(a);return c}};
 				function display() {
+					document.getElementById("welcome").innerHTML='<?php if(isset($_SESSION['currentUser'])){$html_safe_currentUser = htmlentities($_SESSION['currentUser']);echo "Hi, ".$html_safe_currentUser;}?>';
 					var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 					var table = document.getElementById("calendar");
 					table.caption.innerHTML = "<h2>"+months[currentMonth.month] + " " +currentMonth.year+"</h2>";
@@ -123,7 +121,7 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 				}
 
 				function getEvents(cell, date){
-					var dateString = "day=" + encodeURIComponent(date.getDate()) + "&month=" + encodeURIComponent(date.getMonth()+1) + "&year=" + encodeURIComponent(date.getFullYear());
+					var dateString = "date=" + encodeURIComponent(date.getDate()) + "&month=" + encodeURIComponent(date.getMonth()+1) + "&year=" + encodeURIComponent(date.getFullYear())+"&day="+encodeURIComponent(date.getDay()+1);
 					var xmlHttp = new XMLHttpRequest(); // Initialize our XMLHttpRequest instance
 			    xmlHttp.open("POST", "events5.php", true); // Starting a POST request (NEVER send passwords as GET variables!!!)
 			    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests
@@ -148,7 +146,7 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 				}
 
 				function showEvents(){
-					var dateString = "day=" + encodeURIComponent(currentDate.getDate()) + "&month=" + encodeURIComponent(currentDate.getMonth()+1) + "&year=" + encodeURIComponent(currentDate.getFullYear());
+					var dateString = "date=" + encodeURIComponent(currentDate.getDate()) + "&month=" + encodeURIComponent(currentDate.getMonth()+1) + "&year=" + encodeURIComponent(currentDate.getFullYear())+"&day="+encodeURIComponent(currentDate.getDay()+1);
 					var xmlHttp = new XMLHttpRequest(); // Initialize our XMLHttpRequest instance
 			    xmlHttp.open("POST", "events5.php", true); // Starting a POST request (NEVER send passwords as GET variables!!!)
 			    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests
@@ -164,8 +162,8 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 							var category = events[i].category;
 							var note = events[i].note;
 							var id = events[i].event_id;
-							var editDiv = '<div id="mydialog'+id+'" class="mydialogId" title="Edit Event"><a>Time:</a><input type="time" value="'+time+'" id="time'+id+'"><br><a>Title:</a><input type="text" value="'+title+'" id="title'+id+'"><br><a>Note:</a><input type="text" value="'+note+'" id="note'+id+'"><br><input type="hidden" id="token'+id+'" name="token" value="'+'<?php if(isset($_SESSION["token"])){ echo $_SESSION["token"]; }?>'+'" /><a>Tags:</a><br><label><input name="tag'+id+'" id="work" type="radio" value="work" /> work </label><br /><label><input name="tag'+id+'" id="academic" type="radio" value="academic" /> academic</label><br /><label><input name="tag'+id+'" id="social" type="radio" value="social" /> social </label><br /><label><input name="tag'+id+'" id="family" type="radio" value="family" /> family</label><br /><label><input name="tag'+id+'" id="undefined" type="radio" value="undefined" /> undefined </label></div>';
-							var shareDiv = "<div id='sharedialog"+id+"' class='sharedialog' title='Share Event'><a>User:</a><input type='text' id='user"+id+"'></div>";
+							var editDiv = '<div id="mydialog'+id+'" class="mydialogId" title="Edit Event"><a>Time:</a><input type="time" value="'+time+'" id="time'+id+'"><br><a>Title:</a><input type="text" value="'+title+'" id="title'+id+'"><br><a>Note:</a><input type="text" value="'+note+'" id="note'+id+'"><br><input type="hidden" id="token'+id+'" name="token" value="'+'<?php if(isset($_SESSION["token"])){echo $_SESSION["token"];}?>'+'" /><a>Tags:</a><br><label><input name="tag'+id+'" id="work" type="radio" value="work" /> work </label><br /><label><input name="tag'+id+'" id="academic" type="radio" value="academic" /> academic</label><br /><label><input name="tag'+id+'" id="social" type="radio" value="social" /> social </label><br /><label><input name="tag'+id+'" id="family" type="radio" value="family" /> family</label><br /><label><input name="tag'+id+'" id="undefined" type="radio" value="undefined" /> undefined </label></div>';
+							var shareDiv = "<div id='sharedialog"+id+"' class='sharedialog' title='Share Event'><a>User:</a><input type='text' id='user"+id+"'><input type='hidden' id='token"+id+"' name='token' value='"+"<?php if(isset($_SESSION['token'])){echo $_SESSION['token'];}?>"+"' /></div>";
 							eventHTML += "<div id='"+category+"'><h3>"+time+" "+title+"</h3> "+note+"</div><input type='button' value='Edit Event' onclick=editEvent("+id+") />"+editDiv+"<input type='button' value='Share Event' onclick=shareEvent("+id+") />"+shareDiv+"<input type='button' value='Delete Event' onclick=deleteEvent("+id+") /><br>";
 						}
 						eventLog.innerHTML = eventHTML;
@@ -174,7 +172,8 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 				}
 
 				function deleteEvent(id){
-					var idString = "id=" + encodeURIComponent(id);
+					var token = '<?php if(isset($_SESSION["token"])){echo $_SESSION["token"];}?>';
+					var idString = "id=" + encodeURIComponent(id)+"&token="+token;
 					var xmlHttp = new XMLHttpRequest(); // Initialize our XMLHttpRequest instance
 			    xmlHttp.open("POST", "delete_event5.php", true); // Starting a POST request (NEVER send passwords as GET variables!!!)
 			    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests
@@ -235,7 +234,8 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 						buttons: {
 			        "Share Event": function() {
 								var user = document.getElementById("user"+id).value;
-								var dataString = "id="+encodeURIComponent(id)+"&user="+encodeURIComponent(user);
+								var token = document.getElementById("token"+id).value;
+								var dataString = "id="+encodeURIComponent(id)+"&user="+encodeURIComponent(user)+"&token="+encodeURIComponent(token);
 								var xmlHttp = new XMLHttpRequest(); // Initialize our XMLHttpRequest instance
 								xmlHttp.open("POST", "share_event5.php", true); // Starting a POST request (NEVER send passwords as GET variables!!!)
 								xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests
@@ -244,7 +244,7 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 										if (jsonData.success) { // in PHP, this was the "success" key in the associative array; in JavaScript, it's the .success property of jsonData
 												alert("Event shared successfully.")
 										} else {
-												alert("Event failed to share.");
+												alert("Event failed to share. " + jsonData.message);
 										}
 								}, false); // Bind the callback to the load event
 								xmlHttp.send(dataString); // Send the data
@@ -272,7 +272,6 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 								}
 								var dateString = currentMonth.year+"-"+(currentMonth.month+1)+"-"+currentDate.getDate();
 								var dataString = "date="+encodeURIComponent(dateString)+"&time="+encodeURIComponent(time)+"&title="+encodeURIComponent(title)+"&note="+encodeURIComponent(note)+"&category="+encodeURIComponent(which_tag)+"&token="+encodeURIComponent(token);
-								alert(dataString);
 								var xmlHttp = new XMLHttpRequest(); // Initialize our XMLHttpRequest instance
 						    xmlHttp.open("POST", "new_event5.php", true); // Starting a POST request (NEVER send passwords as GET variables!!!)
 						    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests

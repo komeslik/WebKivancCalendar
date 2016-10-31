@@ -2,9 +2,10 @@
   require 'database5.php';
   ini_set("session.cookie_httponly", 1);
   session_start();
-  $day = $_POST['day'];
+  $date = $_POST['date'];
   $month = $_POST['month'];
   $year = $_POST['year'];
+  $day = (string)$_POST['day'];
 
   if(isset($_SESSION['currentUser'])){
     $user = (string)$_SESSION['currentUser'];
@@ -12,10 +13,9 @@
     $user = "";
   }
   $likeUser = '%'.$user.'%';
-  $stmt = $mysqli->prepare("SELECT shared, note, title, time, category, event_id FROM events WHERE shared LIKE ? AND date= ? ORDER BY time ASC");
-  $stmt->bind_param('ss', $likeUser, $date);
-  //$userString = "%".$user."%";
-  $date = (string)$year."-".$month."-".$day;
+  $stmt = $mysqli->prepare("SELECT shared, note, title, time, category, event_id, repeatt FROM events WHERE shared LIKE ? AND (date=? OR repeatt=?) ORDER BY time ASC");
+  $stmt->bind_param('sss', $likeUser, $dateString, $day);
+  $dateString = (string)$year."-".$month."-".$date;
   $stmt->execute();
   $result = $stmt->get_result();
   $events = array();
