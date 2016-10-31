@@ -11,9 +11,10 @@
   $title = (string)$_POST['title'];
   $note = (string)$_POST['note'];
   $category = (string)$_POST['category'];
+  $repeat = (string)$_POST['repeat'];
   $id = (string)$_POST['id'];
-  $editEvent = $mysqli->prepare("UPDATE events SET date=?, time=?, title=?, note=?, category=? WHERE event_id=?");
-  $editEvent->bind_param('ssssss', $date, $time, $title, $note, $category, $id);
+  $editEvent = $mysqli->prepare("UPDATE events SET date=?, time=?, title=?, note=?, category=?, repeatt=? WHERE event_id=?");
+  $editEvent->bind_param('sssssss', $date, $time, $title, $note, $category, $repeat, $id);
   $editEvent->execute();
   $editEvent->close();
   echo json_encode(array(

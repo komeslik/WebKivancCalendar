@@ -76,28 +76,15 @@
 			<div id="eventHeader"></div>
 			<div id="events"></div>
 			<input type="button" value="New Event" onclick=showdialog() />
-   		<div id="mydialog" title="Add New Event">
-				<a>Time:</a>
-				<input type="time" id="time"><br>
-				<a>Title:</a>
-				<input type="text" id="title"><br>
-				<a>Note:</a>
-				<input type="text" id="note"><br>
-				<a>Tags:</a><br>
-				<label><input name="tag" id="work" type="radio" value="work" /> work </label><br />
-				<label><input name="tag" id="academic" type="radio" value="academic" /> academic</label><br />
-				<label><input name="tag" id="social" type="radio" value="social" /> social </label><br />
-				<label><input name="tag" id="family" type="radio" value="family" /> family</label><br />
-				<label><input name="tag" id="undefined" type="radio" value="undefined" /> undefined </label><br />
-				<input type="hidden" id="token" name="token" value="<?php echo $_SESSION['token'];?>" />
-			</div>
+   		<div id="mydialog" title="Add New Event"></div>
 		</div>
 			<script type="text/javascript">
 			(function(){Date.prototype.deltaDays=function(c){return new Date(this.getFullYear(),this.getMonth(),this.getDate()+c)};Date.prototype.getSunday=function(){return this.deltaDays(-1*this.getDay())}})();
 function Week(c){this.sunday=c.getSunday();this.nextWeek=function(){return new Week(this.sunday.deltaDays(7))};this.prevWeek=function(){return new Week(this.sunday.deltaDays(-7))};this.contains=function(b){return this.sunday.valueOf()===b.getSunday().valueOf()};this.getDates=function(){for(var b=[],a=0;7>a;a++)b.push(this.sunday.deltaDays(a));return b}}
 function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return new Month(c+Math.floor((b+1)/12),(b+1)%12)};this.prevMonth=function(){return new Month(c+Math.floor((b-1)/12),(b+11)%12)};this.getDateObject=function(a){return new Date(this.year,this.month,a)};this.getWeeks=function(){var a=this.getDateObject(1),b=this.nextMonth().getDateObject(0),c=[],a=new Week(a);for(c.push(a);!a.contains(b);)a=a.nextWeek(),c.push(a);return c}};
 				function display() {
-					document.getElementById("welcome").innerHTML='<?php if(isset($_SESSION['currentUser'])){$html_safe_currentUser = htmlentities($_SESSION['currentUser']);echo "Hi, ".$html_safe_currentUser;}?>';
+					document.getElementById("welcome").innerHTML="<?php if(isset($_SESSION['currentUser'])){$html_safe_currentUser = htmlentities($_SESSION['currentUser']);echo 'Hi, '.$html_safe_currentUser;}?>";
+					document.getElementById("mydialog").innerHTML='<a>Time:</a><input type="time" id="time" value=""><br><a>Title:</a><input type="text" id="title" value=""><br><a>Note:</a><input type="text" id="note" value=""><br><a>Tags:</a><br><label><input name="tag" id="work" type="radio" value="work" /> Work </label><br /><label><input name="tag" id="academic" type="radio" value="academic" /> Academic</label><br /><label><input name="tag" id="social" type="radio" value="social" /> Social </label><br /><label><input name="tag" id="family" type="radio" value="family" /> Family</label><br /><label><input name="tag" id="undefined" type="radio" value="undefined" /> Undefined </label><br /><label><input type="checkbox" id="repeat" name="repeat"> Repeat Every Week </label><input type="hidden" id="token" name="token" value="<?php if(isset($_SESSION["token"])){echo $_SESSION["token"];}?>" />'
 					var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 					var table = document.getElementById("calendar");
 					table.caption.innerHTML = "<h2>"+months[currentMonth.month] + " " +currentMonth.year+"</h2>";
@@ -162,7 +149,11 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 							var category = events[i].category;
 							var note = events[i].note;
 							var id = events[i].event_id;
-							var editDiv = '<div id="mydialog'+id+'" class="mydialogId" title="Edit Event"><a>Time:</a><input type="time" value="'+time+'" id="time'+id+'"><br><a>Title:</a><input type="text" value="'+title+'" id="title'+id+'"><br><a>Note:</a><input type="text" value="'+note+'" id="note'+id+'"><br><input type="hidden" id="token'+id+'" name="token" value="'+'<?php if(isset($_SESSION["token"])){echo $_SESSION["token"];}?>'+'" /><a>Tags:</a><br><label><input name="tag'+id+'" id="work" type="radio" value="work" /> work </label><br /><label><input name="tag'+id+'" id="academic" type="radio" value="academic" /> academic</label><br /><label><input name="tag'+id+'" id="social" type="radio" value="social" /> social </label><br /><label><input name="tag'+id+'" id="family" type="radio" value="family" /> family</label><br /><label><input name="tag'+id+'" id="undefined" type="radio" value="undefined" /> undefined </label></div>';
+							var repeat = '';
+							if(events[i].repeatt > 0){
+								repeat = 'checked';
+							}
+							var editDiv = '<div id="mydialog'+id+'" class="mydialogId" title="Edit Event"><a>Time:</a><input type="time" value="'+time+'" id="time'+id+'"><br><a>Title:</a><input type="text" value="'+title+'" id="title'+id+'"><br><a>Note:</a><input type="text" value="'+note+'" id="note'+id+'"><br><input type="hidden" id="token'+id+'" name="token" value="'+'<?php if(isset($_SESSION["token"])){echo $_SESSION["token"];}?>'+'" /><a>Tags:</a><br><label><input name="tag'+id+'" id="work" type="radio" value="work" />Work</label><br /><label><input name="tag'+id+'" id="academic" type="radio" value="academic" />Academic</label><br /><label><input name="tag'+id+'" id="social" type="radio" value="social" />Social</label><br /><label><input name="tag'+id+'" id="family" type="radio" value="family" />Family</label><br /><label><input name="tag'+id+'" id="undefined" type="radio" value="undefined" />Undefined</label><br><label><input type="checkbox" id="repeat'+id+'" name="repeat" '+repeat+'>Repeat Every Week</label></div>';
 							var shareDiv = "<div id='sharedialog"+id+"' class='sharedialog' title='Share Event'><a>User:</a><input type='text' id='user"+id+"'><input type='hidden' id='token"+id+"' name='token' value='"+"<?php if(isset($_SESSION['token'])){echo $_SESSION['token'];}?>"+"' /></div>";
 							eventHTML += "<div id='"+category+"'><h3>"+time+" "+title+"</h3> "+note+"</div><input type='button' value='Edit Event' onclick=editEvent("+id+") />"+editDiv+"<input type='button' value='Share Event' onclick=shareEvent("+id+") />"+shareDiv+"<input type='button' value='Delete Event' onclick=deleteEvent("+id+") /><br>";
 						}
@@ -206,8 +197,12 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 										break;
 									}
 								}
+								var repeat = 0;
+								if(document.getElementById("repeat"+id).checked){
+									var repeat = currentDate.getDay()+1;
+								}
 								var dateString = currentMonth.year+"-"+(currentMonth.month+1)+"-"+currentDate.getDate();
-								var dataString = "id="+encodeURIComponent(id)+"&date="+encodeURIComponent(dateString)+"&time="+encodeURIComponent(time)+"&title="+encodeURIComponent(title)+"&note="+encodeURIComponent(note)+"&category="+encodeURIComponent(which_tag)+"&token="+encodeURIComponent(token);
+								var dataString = "id="+encodeURIComponent(id)+"&date="+encodeURIComponent(dateString)+"&time="+encodeURIComponent(time)+"&title="+encodeURIComponent(title)+"&note="+encodeURIComponent(note)+"&category="+encodeURIComponent(which_tag)+"&repeat="+encodeURIComponent(repeat)+"&token="+encodeURIComponent(token);
 								var xmlHttp = new XMLHttpRequest(); // Initialize our XMLHttpRequest instance
 								xmlHttp.open("POST", "edit_event5.php", true); // Starting a POST request (NEVER send passwords as GET variables!!!)
 								xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests
@@ -270,8 +265,12 @@ function Month(c,b){this.year=c;this.month=b;this.nextMonth=function(){return ne
 										break;
 									}
 								}
+								var repeat = 0;
+								if(document.getElementById("repeat").checked){
+									var repeat = currentDate.getDay()+1;
+								}
 								var dateString = currentMonth.year+"-"+(currentMonth.month+1)+"-"+currentDate.getDate();
-								var dataString = "date="+encodeURIComponent(dateString)+"&time="+encodeURIComponent(time)+"&title="+encodeURIComponent(title)+"&note="+encodeURIComponent(note)+"&category="+encodeURIComponent(which_tag)+"&token="+encodeURIComponent(token);
+								var dataString = "date="+encodeURIComponent(dateString)+"&time="+encodeURIComponent(time)+"&title="+encodeURIComponent(title)+"&note="+encodeURIComponent(note)+"&category="+encodeURIComponent(which_tag)+"&repeat="+encodeURIComponent(repeat)+"&token="+encodeURIComponent(token);
 								var xmlHttp = new XMLHttpRequest(); // Initialize our XMLHttpRequest instance
 						    xmlHttp.open("POST", "new_event5.php", true); // Starting a POST request (NEVER send passwords as GET variables!!!)
 						    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // It's easy to forget this line for POST requests
