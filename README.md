@@ -1,6 +1,5 @@
 # WebKivanc Calendar
-### Link to our website
-<http://ec2-54-165-229-228.compute-1.amazonaws.com/~dgrossman/home5.php>
+WebKivanc is a simple Calendar I built with my friend Daniel in order to explore PHP.
 
 ### Sample Usernames for our Calendar
 
